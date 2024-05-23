@@ -25,4 +25,5 @@ parser.add_argument('--summary', action='store_true', help='Print summary of sta
 
 args = parser.parse_args()
 
-
+if __name__ == "__main__":
+    main()
