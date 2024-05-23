@@ -13,7 +13,7 @@ parser.add_argument('--vcf', type=str, required=True, help='Path to VCF file')
 parser.add_argument('--pheno', type=str, required=True, help='Path to phenotype file')
 
 # Optional arguments
-parser.add_argument('-o', '--out', type=str, help='Write output to File', 'Default: stdout',\
+parser.add_argument('-o', '--out', type=str, help='Write output to File (Default: stdout)',\
             required=False, metavar='FILE')
 parser.add_argument('--linear', action='store_true', help='Perform linear regression',\
             required=False)
