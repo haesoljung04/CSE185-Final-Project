@@ -187,10 +187,9 @@ def summary(linearFile):
             p_value = float(fields[8])
             # Check if the SNP is genome-wide significant
             if p_value < 5e-8:
-                # Increment the counter
                 significant_snps_count += 1
     
-    # Print the total number of significant SNPs found
+    # Print total number of significant SNPs found
     print(f"Total number of significant SNPs found: {significant_snps_count}")
 
 
