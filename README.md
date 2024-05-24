@@ -14,3 +14,9 @@ If you lack root access, please use the options specified in the following comma
 
 After all this, use `myGWAS --help` to learn how to use this tool!
 ## Basic Usage
+The basic format of `myGWAS` is:
+`myGWAS --vcf example_gwas.vcf --pheno example_gwas.phen --out example_gwas --linear --maf 0.05 --allow-no-sex`
+
+To run `myGWAS` on a small test example(using files in the example-files directory on this repo):
+`myGWAS --vcf example1.vcf --pheno example1.phen --out example1 --linear --maf 0.05 --allow-no-sex`
+
