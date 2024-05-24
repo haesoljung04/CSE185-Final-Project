@@ -1,6 +1,11 @@
 #!/opt/homebrew/bin/python3
 
+# import for parsing command line arguments
 import argparse
+
+# imports for linear regression analysis
+from cyvcf2 import VCF
+from scipy.stats import linregress
 
 # imports for manhattan plot/qq plot
 import numpy as np
@@ -32,11 +37,76 @@ def main():
   
   args = parser.parse_args()
 
-def plot():
-  # Load your GWAS results
-  df = pd.read_csv("lab3_gwas.assoc.linear", delim_whitespace=True)
+  # Accessing all the command line arguments
+  vcf_file = args.vcf
+  pheno_file = args.pheno
+  output_file = args.out if args.out else "myGWAS"  # the default output file will be named myGWAS.assoc.linear
+  perform_linear = args.linear
+  maf_threshold = args.maf
+  allow_no_sex = args.allow_no_sex
+  print_summary = args.summary
+  if perform_linear:
+      linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex)
+      plot(output_file + ".assoc.linear")
+      if print_summary:
+        summary(output_file + ".assoc.linear")
+  else:
+      print("Currently, only linear regression is implemented. Use --linear please.")
+
+
+# Perform the linear regression for quantitative traits
+def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex):
+    # Read phenotype file
+    pheno_df = pd.read_csv(pheno_file, delim_whitespace=True, header=None, names=["famID", "IndID", "Phenotype"])
+    # Create a dictionary where each IID is a key and the value is pheno value
+    pheno_dict = dict(zip(pheno_df["IndID"], pheno_df["Phenotype"]))
+    # Parse VCF file using cyvcf2
+    vcf = VCF(vcf_file)
+    samples = vcf.samples
+
+    # Prepare output file
+    output = open(output_file + ".assoc.linear", "w")
+    output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
+    # Iterate through each variant using cyvcf2
+    for variant in vcf:
+        # Calculate MAF to check if we include the variant in our calculations
+        alleles = variant.gt_bases
+        allele_counts = np.array([alleles.count('0'), alleles.count('1')])
+        maf = min(allele_counts) / sum(allele_counts)
+        # If the maf is too small then do not include
+        if maf < maf_threshold:
+            continue
+        
+        # Prep data for linear regression
+        genotype_data = []
+        phenotype_data = []
+        for i, sample in enumerate(samples):
+            # Check if the sample actually exists in the phenotype dictionary
+            if sample in pheno_dict:
+                gt = variant.genotypes[i][0:2]
+                genotype_data.append(sum(gt))
+                phenotype_data.append(pheno_dict[sample])
+        # If we have samples and everything was correctly initialized
+        if len(genotype_data) > 0:
+            genotype_data = np.array(genotype_data)
+            phenotype_data = np.array(phenotype_data)
+
+            # Do linear regression using scipy
+            slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
+            
+            # Write results to output(formatting to 4 decimal places)
+            output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
+
+    output.close()
+
   
-  # Set font properties
+
+# Plotting the Manhattan and QQ plots
+def plot(linearFile):
+  # Load your GWAS results
+  df = pd.read_csv("linearFile", delim_whitespace=True)
+  
+  # Set font properties(not working rn)
   plt.rcParams['font.family'] = 'Arial'
   plt.rcParams['font.size'] = 12
   plt.rcParams['font.weight'] = 'normal'
@@ -106,6 +176,22 @@ def plot():
   
   plt.show()
 
+# Output the # genome wide significant SNPS
+def summary(linearFile):
+    sig_SNP_count = 0
+    # Open the linear file for reading
+    with open(linearFile, 'r') as file:
+        # Read each line in the file
+        for line in file:
+            fields = line.strip().split('\t')
+            p_value = float(fields[8])
+            # Check if the SNP is genome-wide significant
+            if p_value < 5e-8:
+                # Increment the counter
+                significant_snps_count += 1
+    
+    # Print the total number of significant SNPs found
+    print(f"Total number of significant SNPs found: {significant_snps_count}")
 
 
 if __name__ == "__main__":
