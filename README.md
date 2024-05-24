@@ -1,22 +1,61 @@
-# CSE185-Final-Project
-cs185sp24 final project. Collaborators: Meiqi Lai, Lydia Roh
+# myGWAS: A Genome-Wide Association Study Tool
+
+## Description
+
+myGWAS is a command-line tool designed to perform GWAS on given VCF and phenotype files, focusing on linear regression analysis and visualization through Manhattan and QQ plots.
 
 ## Installation Instructions
-Installation requires all libraries contained within the `requirements.txt` file to be installed. All of this can be accomplished through `pip`.
-For example: `pip install cyvcf2`
 
-Once you have installed all required libraries, proceed to install `myGWAS`:
-`python setup.py install`
+To install the required libraries contained in the `requirements.txt` file, you can use `pip`. For example:
 
-If you lack root access, please use the options specified in the following commands instead:
-`pip install --user cyvcf2`
-`python setup.py install --user `
+```bash
+pip install -r requirements.txt
+```
 
-After all this, use `myGWAS --help` to learn how to use this tool!
+To install `myGWAS`, use the following command:
+
+```bash
+python setup.py install
+```
+
+If you lack root access, use the `--user` option:
+
+```bash
+pip install --user -r requirements.txt
+python setup.py install --user
+```
+
+After installation, you can check the usage instructions by running:
+
+```bash
+myGWAS --help
+```
+
 ## Basic Usage
-The basic format of `myGWAS` is:
-`myGWAS --vcf example_gwas.vcf --pheno example_gwas.phen --out example_gwas --linear --maf 0.05 --allow-no-sex`
 
-To run `myGWAS` on a small test example(using files in the example-files directory on this repo):
-`python myGWAS.py --vcf example1.vcf --pheno example1.phen --out example1 --linear --maf 0.05 --allow-no-sex`
+The basic format for running `myGWAS` is:
 
+```bash
+myGWAS --vcf <path_to_vcf_file> --pheno <path_to_phenotype_file> --out <output_file_prefix> --linear --maf 0.05 --allow-no-sex
+```
+
+Example command using a small test example in the `example-files` directory in this repository:
+
+```bash
+python myGWAS.py --vcf example1.vcf --pheno example1.phen --out example1 --linear --maf 0.05 --allow-no-sex
+```
+
+## Complete Usage Instructions
+
+
+### Required Arguments
+
+
+### Example Commands
+
+
+## File Format
+
+
+## Contributors
+Lydia Roh (A17002778), Haesol Jung (A17348180), Meiqi Lai (A17043227)
