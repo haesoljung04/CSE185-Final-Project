@@ -1,0 +1,7 @@
+cyvcf2
+scipy
+pandas
+seaborn
+matplotlib
+adjustText
+setuptools
