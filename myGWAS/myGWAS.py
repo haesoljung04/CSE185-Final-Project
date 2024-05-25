@@ -70,7 +70,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     # Iterate through each variant using cyvcf2
     for variant in vcf:
         # Calculate MAF to check if we include the variant in our calculations
-        alleles = variant.gt_alleles
+        alleles = variant.gt_bases
         allele_counts = np.zeros(2, dtype=int)
         allele_counts = np.sum(gt_bases.astype(int), axis=0)
         maf = np.min(allele_counts) / np.sum(allele_counts)
