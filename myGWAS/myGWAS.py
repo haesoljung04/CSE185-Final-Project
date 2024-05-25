@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/python3
+#!/usr/bin/env python
 
 # import for parsing command line arguments
 import argparse
