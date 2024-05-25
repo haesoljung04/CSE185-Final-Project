@@ -25,7 +25,7 @@ pip install --user -r requirements.txt
 python setup.py install --user
 ```
 
-After installation, you can check the usage instructions by running:
+After installation, you can check the usage instructions by running(make sure you are in the myGWAS directory):
 
 ```bash
 chmod +x myGWAS.py
