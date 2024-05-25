@@ -40,7 +40,7 @@ The basic format for running `myGWAS` is:
 python myGWAS.py --vcf <path_to_vcf_file> --pheno <path_to_phenotype_file> --out <output_file_prefix> --linear --maf 0.05 --allow-no-sex
 ```
 
-Example command using a small test example in the `example-files` directory in this repository:
+Example command using a small test example in the `example-files` directory in this repository(make sure you are in the CSE185-Final-Project directory:
 
 ```bash
 python ~/CSE185-Final-Project/myGWAS/myGWAS.py --vcf ~/CSE185-Final-Project/example-files/example1.vcf --pheno ~/CSE185-Final-Project/example-files/example1.phen --out example1 --linear --maf 0.05 --allow-no-sex
