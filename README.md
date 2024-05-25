@@ -29,7 +29,7 @@ After installation, you can check the usage instructions by running(make sure yo
 
 ```bash
 chmod +x myGWAS.py
-myGWAS --help
+./myGWAS.py --help
 ```
 
 ## Basic Usage
@@ -37,7 +37,7 @@ myGWAS --help
 The basic format for running `myGWAS` is:
 
 ```bash
-myGWAS --vcf <path_to_vcf_file> --pheno <path_to_phenotype_file> --out <output_file_prefix> --linear --maf 0.05 --allow-no-sex
+python myGWAS.py --vcf <path_to_vcf_file> --pheno <path_to_phenotype_file> --out <output_file_prefix> --linear --maf 0.05 --allow-no-sex
 ```
 
 Example command using a small test example in the `example-files` directory in this repository:
