@@ -72,7 +72,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
         # Calculate MAF to check if we include the variant in our calculations
         alleles = variant.gt_bases
         allele_counts = np.zeros(2, dtype=int)
-        for allele in alleles.split('|'):
+        for allele in alleles:
             allele_counts += variant.gt_types[:, allele]
         maf = np.min(allele_counts) / np.sum(allele_counts)
         # If the maf is too small then do not include
