@@ -28,6 +28,7 @@ python setup.py install --user
 After installation, you can check the usage instructions by running:
 
 ```bash
+chmod +x mypileup.py
 myGWAS --help
 ```
 
