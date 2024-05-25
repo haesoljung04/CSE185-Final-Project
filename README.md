@@ -43,7 +43,7 @@ python myGWAS.py --vcf <path_to_vcf_file> --pheno <path_to_phenotype_file> --out
 Example command using a small test example in the `example-files` directory in this repository:
 
 ```bash
-python myGWAS.py --vcf example1.vcf --pheno example1.phen --out example1 --linear --maf 0.05 --allow-no-sex
+python ~/CSE185-Final-Project/myGWAS/myGWAS.py --vcf ~/CSE185-Final-Project/example-files/example1.vcf --pheno ~/CSE185-Final-Project/example-files/example1.phen --out example1 --linear --maf 0.05 --allow-no-sex
 ```
 
 ## Complete Usage Instructions
