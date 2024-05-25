@@ -52,15 +52,29 @@ python ~/CSE185-Final-Project/myGWAS/myGWAS.py --vcf ~/CSE185-Final-Project/exam
 
 ## Complete Usage Instructions
 
-
 ### Required Arguments
+The required input to the GWAS command is a VCF file and a Phenotype file. Users could also specify additional options as listed below:
 
+- `--vcf FILE` : The inputted VCF file contains genetic variant data.
+- `--pheno FILE` : The phenotye file contains trait information for the samples.
+  
+Option Parameters:
+- `-o FILE, --out FILE` : This command writes the output to a file. By default, the output is typically written to stdout.
+- `--linear` : This command performs linear regression analysis, specifying the type of statistical test that will be used in the GWAS command
+- `--maf FLOAT` : This command filters the variants by the MAF (minor allele frequency). Only certain variants with float value greater than the threshold will be incorporated into the analysis, meaning that variants with MAF below the threshold will be excluded.
+- `-- allow-no-sex` : This command will permit the analysis to run smoothly 
 
 ### Example Commands
 
+```bash
+python ~/CSE185-Final-Project/myGWAS/myGWAS.py --vcf ~/CSE185-Final-Project/example-files/pruned_coatColor_maf_geno.vcf.gz --pheno ~/CSE185-Final-Project/example-files/coatColor.phen --out example1 --linear --maf 0.05 --allow-no-sex
+```
 
 ## File Format
 
+The output file format for my `GWAS` tool is equivalent to the standard GWAS method. For a more detail specification, see 
 
 ## Contributors
-Lydia Roh (A17002778), Haesol Jung (A17348180), Meiqi Lai (A17043227)
+This repository was written by Lydia Roh (A17002778), Haesol Jung (A17348180), and Meiqi Lai (A17043227).
+
+Please submit a pull request in the event that you have any corrections or suggestions. Thank you!
