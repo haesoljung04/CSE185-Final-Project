@@ -5,7 +5,7 @@
 myGWAS is a command-line tool designed to perform GWAS on given VCF and phenotype files, focusing on linear regression analysis and visualization through Manhattan and QQ plots.
 
 ## Installation Instructions
-
+NOTE: currently only working on datahub so please test on there...
 To install the required libraries contained in the `requirements.txt` file, you can use `pip`. For example:
 
 ```bash
