@@ -93,7 +93,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
             if sample in pheno_dict:  
                 gt = variant.genotypes[i]
                 genotype_data.append(gt)
-                phenotype_data.append(binary_mapping[pheno_dict[sample])
+                phenotype_data.append(binary_mapping[pheno_dict[sample]])
         # If we have samples and everything was correctly initialized
         if len(genotype_data) > 0:
             # Convert to np arrays for speed
