@@ -93,7 +93,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
         if len(genotype_data) > 0:
             # Convert to np arrays for speed
             genotype_data = np.array(genotype_data, dtype=int)
-            phenotype_data = np.array(phenotype_data, dtype=int)
+            phenotype_data = np.array(phenotype_data)
 
             # Do linear regression using scipy
             slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
