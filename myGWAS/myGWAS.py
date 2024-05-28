@@ -86,14 +86,14 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
         for i, sample in enumerate(samples):
             # Check if the sample actually exists in the pt dictionary
             if sample in pheno_dict:  
-                gt = variant.genotypes[i][0:2]
-                genotype_data.append(sum(gt))
-                phenotype_data.append(pheno_dict[sample])
+                gt = variant.genotypes[i]
+                genotype_data.append(gt)
+                phenotype_data.append(int(pheno_dict[sample]))
         # If we have samples and everything was correctly initialized
         if len(genotype_data) > 0:
             # Convert to np arrays for speed
-            #genotype_data = np.array(genotype_data, dtype=int)
-            #phenotype_data = np.array(phenotype_data, dtype=float)
+            genotype_data = np.array(genotype_data, dtype=int)
+            phenotype_data = np.array(phenotype_data, dtype=int)
 
             # Do linear regression using scipy
             slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
