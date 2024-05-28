@@ -86,6 +86,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
         for i, sample in enumerate(samples):
             # Check if the sample actually exists in the phenotype dictionary
             if sample in pheno_dict:
+                print("GOT HERE")
                 gt = variant.genotypes[i][0:2]
                 genotype_data.append(sum(gt))
                 phenotype_data.append(pheno_dict[sample])
