@@ -56,10 +56,15 @@ def main():
 
 # Perform the linear regression for quantitative traits
 def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex):
+  
     # Read phenotype file
     pheno_df = pd.read_csv(pheno_file, delim_whitespace=True, header=None, names=["famID", "IndID", "Phenotype"])
     # Create a dictionary where each IID is a key and the value is pheno value
     pheno_dict = dict(zip(pheno_df["IndID"], pheno_df["Phenotype"]))
+    unique_phenotypes = pheno_df["Phenotype"].unique()
+    # Create a binary mapping based on the unique phenotypes
+    binary_mapping = {phenotype: index for index, phenotype in enumerate(unique_phenotypes)}
+
     # Parse VCF file using cyvcf2
     vcf = VCF(vcf_file)
     samples = vcf.samples
@@ -88,7 +93,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
             if sample in pheno_dict:  
                 gt = variant.genotypes[i]
                 genotype_data.append(gt)
-                phenotype_data.append(int(pheno_dict[sample]))
+                phenotype_data.append(binary_mapping[pheno_dict[sample])
         # If we have samples and everything was correctly initialized
         if len(genotype_data) > 0:
             # Convert to np arrays for speed
