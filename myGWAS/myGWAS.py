@@ -127,13 +127,11 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     with Pool(cpu_count()) as p:
         print("opened pool")
         with tqdm(total=num_variants, desc="Processing Variants") as pbar:
-            print("opened tqdm")
-            for result in p.map(lambda variant: process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf):
-                print("for loop")
+            results = p.map(lambda variant: process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf)
+            for result in results:
                 if result:
                     output.write("\t".join(map(str, result)) + "\n")
-                    print("wrote a line")
-                pbar.update()
+                    pbar.update()
     output.close()
 
 # Plotting the Manhattan and QQ plots
