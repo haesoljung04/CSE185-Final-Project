@@ -5,3 +5,5 @@ seaborn
 matplotlib
 adjustText
 setuptools
+tqdm
+multiprocessing
