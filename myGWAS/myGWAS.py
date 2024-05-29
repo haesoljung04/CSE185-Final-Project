@@ -103,6 +103,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
             # Check the shape of the arrays
   
             # Do linear regression using scipy
+            print("we got to right before lin regresss")
             slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
             
             # Write results to output(formatting to 4 decimal places)
