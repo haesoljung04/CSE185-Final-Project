@@ -119,7 +119,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
   
     # count number of variants to be used in progress bar
     num_variants = sum(1 for _ in vcf)
-    print("this is" + num_variants)
+    print("this is" + str(num_variants))
     # Prepare output file
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
