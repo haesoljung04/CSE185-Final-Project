@@ -48,10 +48,10 @@ def main():
   if perform_linear:
       linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex)
       print("Finished Linear Regression")
-      plot(output_file + ".assoc.linear")
+      plot(output_file + ".assoc.linear", )
       print("Finished Plotting")
       if print_summary:
-        summary(output_file + ".assoc.linear")
+        summary(output_file + ".assoc.linear", "manhattan_plot.png", "qq_plot.png")
         print("Finished Summary")
   else:
       print("Currently, only linear regression is implemented. Use --linear please.")
@@ -117,79 +117,83 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
   
 
 # Plotting the Manhattan and QQ plots
-def plot(linearFile):
-  # Load your GWAS results
-  df = pd.read_csv(linearFile, delim_whitespace=True)
+def plot(linearFile, manhattan_file, qq_file):
+    # Load your GWAS results
+    df = pd.read_csv(linearFile, delim_whitespace=True)
   
-  # Set font properties(not working rn)
-  #plt.rcParams['font.family'] = 'Arial'
-  #plt.rcParams['font.size'] = 12
-  #plt.rcParams['font.weight'] = 'normal'
+    # Set font properties (if needed)
+    # plt.rcParams['font.family'] = 'Arial'
+    # plt.rcParams['font.size'] = 12
+    # plt.rcParams['font.weight'] = 'normal'
   
-  #sns.set(font='Arial', style='white')
+    # sns.set(font='Arial', style='white')
   
-  # Data preparation
-  df['-log10(P)'] = -np.log10(df['P'])
-  df['CHR'] = df['CHR'].astype('category')
-  df = df.sort_values(['CHR', 'BP'])
-  df.reset_index(inplace=True, drop=True)
-  df['i'] = df.index
+    # Data preparation
+    df['-log10(P)'] = -np.log10(df['P'])
+    df['CHR'] = df['CHR'].astype('category')
+    df = df.sort_values(['CHR', 'BP'])
+    df.reset_index(inplace=True, drop=True)
+    df['i'] = df.index
 
-  # Coloring
-  unique_chromosomes = sorted(df['CHR'].unique())
-  num_chromosomes = len(unique_chromosomes)
-  colors = sns.color_palette("husl", num_chromosomes)
+    # Coloring
+    unique_chromosomes = sorted(df['CHR'].unique())
+    num_chromosomes = len(unique_chromosomes)
+    colors = sns.color_palette("husl", num_chromosomes)
   
-  # Generate Manhattan plot
-  plot = sns.relplot(data=df, x='i', y='-log10(P)', aspect=3.7, 
-                     hue='CHR', palette=colors, legend=None, marker='o', alpha=1, s=15)  # Adjust marker type and transparency
+    # Generate Manhattan plot
+    plot = sns.relplot(data=df, x='i', y='-log10(P)', aspect=3.7, 
+                       hue='CHR', palette=colors, legend=None, marker='o', alpha=1, s=15)  # Adjust marker type and transparency
   
-  # Identify the top 5 most significant SNPs
-  top_5_snps = df.nsmallest(5, 'P')
+    # Identify the top 5 most significant SNPs
+    top_5_snps = df.nsmallest(5, 'P')
   
-  # Iterate over each Axes object in the FacetGrid
-  texts = []
-  for ax in plot.axes.flat:
-      # Add a horizontal line for genome-wide significance
-      ax.axhline(y=-np.log10(5e-8), color='black', linestyle='--', linewidth=1)
+    # Iterate over each Axes object in the FacetGrid
+    texts = []
+    for ax in plot.axes.flat:
+        # Add a horizontal line for genome-wide significance
+        ax.axhline(y=-np.log10(5e-8), color='black', linestyle='--', linewidth=1)
       
-      # Set x-axis label and tick labels
-      chrom_df = df.groupby('CHR')['i'].median()
-      ax.set_xlabel('Chromosome')
-      ax.set_xticks(chrom_df)
-      ax.set_xticklabels(chrom_df.index, fontsize=12)
+        # Set x-axis label and tick labels
+        chrom_df = df.groupby('CHR')['i'].median()
+        ax.set_xlabel('Chromosome')
+        ax.set_xticks(chrom_df)
+        ax.set_xticklabels(chrom_df.index, fontsize=12)
   
-      # Annotate the top 5 most significant SNPs
-      for idx, row in top_5_snps.iterrows():
-          texts.append(ax.text(row['i'], row['-log10(P)'], row['SNP'], fontsize=10, ha='right', va='bottom'))
+        # Annotate the top 5 most significant SNPs
+        for idx, row in top_5_snps.iterrows():
+            texts.append(ax.text(row['i'], row['-log10(P)'], row['SNP'], fontsize=10, ha='right', va='bottom'))
   
-  # Adjust the text positions to minimize overlap
-  adjust_text(texts, arrowprops=dict(arrowstyle='-', color='gray'))
+    # Adjust the text positions to minimize overlap
+    adjust_text(texts, arrowprops=dict(arrowstyle='-', color='gray'))
   
-  # Set title
-  plot.fig.suptitle('Manhattan plot', fontsize=16, weight='bold')
+    # Set title
+    plot.fig.suptitle('Manhattan plot', fontsize=16, weight='bold')
   
-  # Adjust layout to remove white space
-  plt.tight_layout()
+    # Adjust layout to remove white space
+    plt.tight_layout()
   
-  # Show the Manhattan plot
-  plt.show()
+    # Save the Manhattan plot to a file
+    plt.show()
+    plot.savefig(manhattan_file)
+    
+    # Generate the QQ plot
+    fig, ax = plt.subplots(figsize=(8, 8))
   
-  # Generate the QQ plot
-  fig, ax = plt.subplots(figsize=(8, 8))
+    # Sort the p-values
+    sorted_p_values = np.sort(df['P'])
+    # Calculate expected quantiles
+    expected_quantiles = -np.log10(np.linspace(1 / len(sorted_p_values), 1, len(sorted_p_values)))
+    # Plot the observed versus expected quantiles
+    ax.scatter(expected_quantiles, -np.log10(sorted_p_values), color=colors[0], alpha=0.7)
+    ax.plot([0, max(expected_quantiles)], [0, max(expected_quantiles)], color=colors[1], linestyle='--')
+    ax.set_xlabel('Expected -log10(p-value)')
+    ax.set_ylabel('Observed -log10(p-value)')
+    ax.set_title('QQ Plot')
   
-  # Sort the p-values
-  sorted_p_values = np.sort(df['P'])
-  # Calculate expected quantiles
-  expected_quantiles = -np.log10(np.linspace(1 / len(sorted_p_values), 1, len(sorted_p_values)))
-  # Plot the observed versus expected quantiles
-  ax.scatter(expected_quantiles, -np.log10(sorted_p_values), color=colors[0], alpha=0.7)
-  ax.plot([0, max(expected_quantiles)], [0, max(expected_quantiles)], color=colors[1], linestyle='--')
-  ax.set_xlabel('Expected -log10(p-value)')
-  ax.set_ylabel('Observed -log10(p-value)')
-  ax.set_title('QQ Plot')
-  
-  plt.show()
+    # Save the QQ plot to a file
+    plt.show()
+    fig.savefig(qq_file)
+
 
 # Output the # genome wide significant SNPS
 def summary(linearFile):
