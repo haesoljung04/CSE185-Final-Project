@@ -63,7 +63,7 @@ def create_index_file(vcf_file, index_file):
     # First parse VCF file using cyvcf2
     vcf = VCF(vcf_file)
     samples = vcf.samples
-    
+  
     # Create a DataFrame to store sample IDs and indices
     index_df = pd.DataFrame({"IndID": samples, "Index": range(len(samples))})
     
@@ -116,6 +116,10 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     # Parse VCF file using cyvcf2
     vcf = VCF(vcf_file)
     samples = vcf.samples
+  
+    # count number of variants to be used in progress bar
+    num_variants = sum(1 for _ in vcf)
+
     # Prepare output file
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
@@ -123,7 +127,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     # Use python multiprocessing module to compute lin regress 
     with Pool(cpu_count()) as p:
         # implement progress bar
-        with tqdm(total=len(vcf), desc="Processing Variants") as pbar:
+        with tqdm(total=num_variants, desc="Processing Variants") as pbar:
             for result in p.imap(lambda variant: process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf):
                 if result:
                     output.write("\t".join(map(str, result)) + "\n")
