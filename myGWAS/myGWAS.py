@@ -69,7 +69,32 @@ def create_index_file(vcf_file, index_file):
     # Save DataFrame to index file
     index_df.to_csv(index_file, sep="\t", header=False, index=False)
 
+# Parallel Computing each variant for speed
+def process_variant(variant):
+    # filter out variants with low maf
+    allele_counts = variant.gt_alt_freqs
+    for allele_count in allele_counts:
+        maf = np.min(allele_count) / np.sum(allele_count)
+        if maf < maf_threshold:
+            return None
+    # preprocessing data for linear regression
+    genotype_data = []
+    phenotype_data = []
+    for sample in samples:
+        if sample in pheno_dict:
+            index = index_dict[sample]
+            gt = variant.genotypes[index]
+            genotype_data.append(sum(gt))
+            phenotype_data.append(binary_mapping[pheno_dict[sample]])
+    # run linear regression and store the output in the 
+    if len(genotype_data) > 0:
+        genotype_data = np.array(genotype_data, dtype=int)
+        phenotype_data = np.array(phenotype_data, dtype=int)
 
+        slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
+        return (variant.CHROM, variant.ID, variant.POS, variant.REF, 'ADD', len(genotype_data),
+                slope, r_value / std_err, p_value)
+      
 # Perform the linear regression for quantitative traits
 def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex):
     # Make Index File
@@ -94,31 +119,6 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
 
-    # Parallel Computing each variant for speed
-    def process_variant(variant):
-        # filter out variants with low maf
-        allele_counts = variant.gt_alt_freqs
-        for allele_count in allele_counts:
-            maf = np.min(allele_count) / np.sum(allele_count)
-            if maf < maf_threshold:
-                return None
-        # preprocessing data for linear regression
-        genotype_data = []
-        phenotype_data = []
-        for sample in samples:
-            if sample in pheno_dict:
-                index = index_dict[sample]
-                gt = variant.genotypes[index]
-                genotype_data.append(sum(gt))
-                phenotype_data.append(binary_mapping[pheno_dict[sample]])
-        # run linear regression and store the output in the 
-        if len(genotype_data) > 0:
-            genotype_data = np.array(genotype_data, dtype=int)
-            phenotype_data = np.array(phenotype_data, dtype=int)
-
-            slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
-            return (variant.CHROM, variant.ID, variant.POS, variant.REF, 'ADD', len(genotype_data),
-                    slope, r_value / std_err, p_value)
     # Use python multiprocessing module to compute lin regress 
     with Pool(cpu_count()) as p:
         # run process_variant on each variant within vcf
