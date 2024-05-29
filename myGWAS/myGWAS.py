@@ -78,6 +78,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     for variant in vcf:
         # how many variants are there?
         print(f"Processing variant {countVariant + 1}")
+        countVariant += 1
         # Calculate MAF to check if we include the variant in our calculations
         alleles = variant.gt_bases
         allele_counts = np.zeros(2, dtype=int)
