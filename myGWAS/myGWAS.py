@@ -6,6 +6,7 @@ import argparse
 # imports for linear regression analysis
 from cyvcf2 import VCF
 from scipy.stats import linregress
+from multiprocessing import Pool, cpu_count
 
 # imports for manhattan plot/qq plot
 import numpy as np
