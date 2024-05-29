@@ -128,6 +128,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     with Pool(cpu_count()) as p:
         with tqdm(total=num_variants, desc="Processing Variants") as pbar:
             for result in p.imap(lambda variant: process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf):
+                print("for loop")
                 if result:
                     output.write("\t".join(map(str, result)) + "\n")
                     print("wrote a line")
