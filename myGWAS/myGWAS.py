@@ -92,7 +92,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
             # Check if the sample actually exists in the pt dictionary
             if sample in pheno_dict:  
                 gt = variant.genotypes[i]
-                genotype_data.append(gt)
+                genotype_data.append(sum(gt))
                 phenotype_data.append(binary_mapping[pheno_dict[sample]])
         # If we have samples and everything was correctly initialized
         if len(genotype_data) > 0:
