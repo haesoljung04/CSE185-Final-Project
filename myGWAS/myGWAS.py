@@ -74,11 +74,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
     # Iterate through each variant using cyvcf2
-    countVariant = 0
     for variant in vcf:
-        # how many variants are there?
-        print(f"Processing variant {countVariant + 1}")
-        countVariant += 1
         # Calculate MAF to check if we include the variant in our calculations
         alleles = variant.gt_bases
         allele_counts = np.zeros(2, dtype=int)
@@ -120,7 +116,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
 # Plotting the Manhattan and QQ plots
 def plot(linearFile):
   # Load your GWAS results
-  df = pd.read_csv("linearFile", delim_whitespace=True)
+  df = pd.read_csv(linearFile, delim_whitespace=True)
   
   # Set font properties(not working rn)
   plt.rcParams['font.family'] = 'Arial'
