@@ -139,7 +139,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
           #if result:
           #    output.write("\t".join(map(str, result)) + "\n")
           #pbar.update()
-        with tqdm(total=len(num_variants), desc="Processing Variants") as pbar:
+        with tqdm(total=num_variants, desc="Processing Variants") as pbar:
             for result in p.imap(lambda variant: process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf):
                 if result:
                     output.write("\t".join(map(str, result)) + "\n")
