@@ -47,10 +47,12 @@ def main():
   print_summary = args.summary
   if perform_linear:
       linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex)
-      print("finished lin regression")
+      print("Finished Linear Regression")
       plot(output_file + ".assoc.linear")
+      print("Finished Plotting")
       if print_summary:
         summary(output_file + ".assoc.linear")
+        print("Finished Summary")
   else:
       print("Currently, only linear regression is implemented. Use --linear please.")
 
@@ -120,11 +122,11 @@ def plot(linearFile):
   df = pd.read_csv(linearFile, delim_whitespace=True)
   
   # Set font properties(not working rn)
-  plt.rcParams['font.family'] = 'Arial'
-  plt.rcParams['font.size'] = 12
-  plt.rcParams['font.weight'] = 'normal'
+  #plt.rcParams['font.family'] = 'Arial'
+  #plt.rcParams['font.size'] = 12
+  #plt.rcParams['font.weight'] = 'normal'
   
-  sns.set(font='Arial', style='white')
+  #sns.set(font='Arial', style='white')
   
   # Data preparation
   df['-log10(P)'] = -np.log10(df['P'])
@@ -155,17 +157,17 @@ def plot(linearFile):
       chrom_df = df.groupby('CHR')['i'].median()
       ax.set_xlabel('Chromosome')
       ax.set_xticks(chrom_df)
-      ax.set_xticklabels(chrom_df.index, fontname='Georgia', fontsize=12)
+      ax.set_xticklabels(chrom_df.index, fontsize=12)
   
       # Annotate the top 5 most significant SNPs
       for idx, row in top_5_snps.iterrows():
-          texts.append(ax.text(row['i'], row['-log10(P)'], row['SNP'], fontsize=10, ha='right', va='bottom', fontname='Georgia'))
+          texts.append(ax.text(row['i'], row['-log10(P)'], row['SNP'], fontsize=10, ha='right', va='bottom'))
   
   # Adjust the text positions to minimize overlap
   adjust_text(texts, arrowprops=dict(arrowstyle='-', color='gray'))
   
   # Set title
-  plot.fig.suptitle('Manhattan plot', fontsize=16, weight='bold', fontname='Georgia')
+  plot.fig.suptitle('Manhattan plot', fontsize=16, weight='bold')
   
   # Adjust layout to remove white space
   plt.tight_layout()
