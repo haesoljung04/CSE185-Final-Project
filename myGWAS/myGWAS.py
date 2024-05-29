@@ -108,7 +108,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
           print("we got to right after lin regresss")
           # Write results to output(formatting to 4 decimal places)
           output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
-
+          print("we alr wrote")
     output.close()
 
   
