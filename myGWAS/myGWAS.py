@@ -56,10 +56,28 @@ def main():
   else:
       print("Currently, only linear regression is implemented. Use --linear please.")
 
+# This function creates an index file to speed up linear regression
+def create_index_file(vcf_file, index_file):
+    # First parse VCF file using cyvcf2
+    vcf = VCF(vcf_file)
+    samples = vcf.samples
+    
+    # Create a DataFrame to store sample IDs and indices
+    index_df = pd.DataFrame({"IndID": samples, "Index": range(len(samples))})
+    
+    # Save DataFrame to index file
+    index_df.to_csv(index_file, sep="\t", header=False, index=False)
+
 
 # Perform the linear regression for quantitative traits
 def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex):
-    
+    # Make Index File
+    create_index_file(vcf_file, "index_file.txt")
+    # Read index file
+    index_df = pd.read_csv("index_file.txt", delim_whitespace=True, header=None, names=["IndID", "Index"])
+    # Create a dictionary mapping sample IDs to their corresponding indices
+    index_dict = dict(zip(index_df["IndID"], index_df["Index"]))
+
     # Read phenotype file
     pheno_df = pd.read_csv(pheno_file, delim_whitespace=True, header=None, names=["famID", "IndID", "Phenotype"])
     # Create a dictionary where each IID is a key and the value is pheno value
@@ -95,10 +113,11 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
         # Prep data for linear regression
         genotype_data = []
         phenotype_data = []
-        for i, sample in enumerate(samples):
+        for sample in samples:
             # Check if the sample actually exists in the pt dictionary
             if sample in pheno_dict:  
-                gt = variant.genotypes[i]
+                index = index_dict[sample]
+                gt = variant.genotypes[index]
                 genotype_data.append(sum(gt))
                 phenotype_data.append(binary_mapping[pheno_dict[sample]])
         # If we have samples and everything was correctly initialized
