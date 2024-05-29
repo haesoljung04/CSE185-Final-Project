@@ -79,7 +79,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     variantCount = 0
     for variant in vcf:
         # Keep track of variant progress
-        print(f"we are processing variant {variantCount}")
+        print(f"Processing variant {variantCount}")
         variantCount += 1
         # Calculate MAF to check if we include the variant in our calculations
         alleles = variant.gt_bases
