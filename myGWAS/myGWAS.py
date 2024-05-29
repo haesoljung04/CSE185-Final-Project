@@ -48,7 +48,7 @@ def main():
   if perform_linear:
       linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex)
       print("Finished Linear Regression")
-      plot(output_file + ".assoc.linear", )
+      plot(output_file + ".assoc.linear", 'manhattan_plot.png', 'qq_plot.png')
       print("Finished Plotting")
       if print_summary:
         summary(output_file + ".assoc.linear", "manhattan_plot.png", "qq_plot.png")
