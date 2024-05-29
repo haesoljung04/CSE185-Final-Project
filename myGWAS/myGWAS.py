@@ -74,7 +74,9 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
     # Iterate through each variant using cyvcf2
+    variantCount = 0
     for variant in vcf:
+        printf("we are processing variant {variantCount}")
         # Calculate MAF to check if we include the variant in our calculations
         alleles = variant.gt_bases
         allele_counts = np.zeros(2, dtype=int)
@@ -103,12 +105,9 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
           # Check the shape of the arrays
     
           # Do linear regression using scipy
-          print("we got to right before lin regresss")
           slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
-          print("we got to right after lin regresss")
           # Write results to output(formatting to 4 decimal places)
           output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
-          print("we alr wrote")
     output.close()
 
   
