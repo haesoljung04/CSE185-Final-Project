@@ -95,19 +95,19 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
                 gt = variant.genotypes[i]
                 genotype_data.append(sum(gt))
                 phenotype_data.append(binary_mapping[pheno_dict[sample]])
-    # If we have samples and everything was correctly initialized
-    if len(genotype_data) > 0:
-      # Convert to np arrays for speed
-      genotype_data = np.array(genotype_data, dtype=int)
-      phenotype_data = np.array(phenotype_data, dtype=int)
-      # Check the shape of the arrays
-
-      # Do linear regression using scipy
-      print("we got to right before lin regresss")
-      slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
-          
-      # Write results to output(formatting to 4 decimal places)
-      output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
+        # If we have samples and everything was correctly initialized
+        if len(genotype_data) > 0:
+          # Convert to np arrays for speed
+          genotype_data = np.array(genotype_data, dtype=int)
+          phenotype_data = np.array(phenotype_data, dtype=int)
+          # Check the shape of the arrays
+    
+          # Do linear regression using scipy
+          print("we got to right before lin regresss")
+          slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
+              
+          # Write results to output(formatting to 4 decimal places)
+          output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
 
     output.close()
 
