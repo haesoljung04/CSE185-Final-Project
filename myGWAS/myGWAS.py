@@ -119,14 +119,15 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
   
     # count number of variants to be used in progress bar
     num_variants = sum(1 for _ in vcf)
-    print("this is" + str(num_variants))
     # Prepare output file
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
 
     # Use python multiprocessing module to compute lin regress 
     with Pool(cpu_count()) as p:
+        print("opened pool")
         with tqdm(total=num_variants, desc="Processing Variants") as pbar:
+            print("opened tqdm")
             for result in p.map(lambda variant: process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf):
                 print("for loop")
                 if result:
