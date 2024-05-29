@@ -99,17 +99,14 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
         # Keep track of variant progress
         print(f"Processing variant {variantCount}")
         variantCount += 1
-        # Calculate MAF to check if we include the variant in our calculations
-        alleles = variant.gt_bases
-        allele_counts = np.zeros(2, dtype=int)
-        # implement this later
-        #for i, allele in enumerate(alleles):
-        #    allele_counts[i] = np.sum(variant.genotypes[:, i][variant.genotypes[:, i] != -1]) # Exclude missing genotypes (-1)
-        #maf = np.min(allele_counts) / np.sum(allele_counts)
-        # If the maf is too small then do not include
-        #if maf < maf_threshold:
-        #    continue
-        
+        # Calculate the maf
+        allele_counts = variant.gt_alt_freqs
+        for allele_count in allele_counts:
+            maf = np.min(allele_count) / np.sum(allele_count)
+            # If the maf is too small then do not include
+            if maf < maf_threshold:
+                continue
+            
         # Prep data for linear regression
         genotype_data = []
         phenotype_data = []
