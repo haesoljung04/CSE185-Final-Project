@@ -47,6 +47,7 @@ def main():
   print_summary = args.summary
   if perform_linear:
       linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex)
+      print("finished lin regression")
       plot(output_file + ".assoc.linear")
       if print_summary:
         summary(output_file + ".assoc.linear")
