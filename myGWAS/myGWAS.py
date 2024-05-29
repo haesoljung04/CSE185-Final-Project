@@ -6,8 +6,6 @@ import argparse
 # imports for linear regression analysis
 from cyvcf2 import VCF
 from scipy.stats import linregress
-from multiprocessing import Pool, cpu_count
-from tqdm import tqdm
 
 # imports for manhattan plot/qq plot
 import numpy as np
@@ -63,39 +61,14 @@ def create_index_file(vcf_file, index_file):
     # First parse VCF file using cyvcf2
     vcf = VCF(vcf_file)
     samples = vcf.samples
-  
+    
     # Create a DataFrame to store sample IDs and indices
     index_df = pd.DataFrame({"IndID": samples, "Index": range(len(samples))})
     
     # Save DataFrame to index file
     index_df.to_csv(index_file, sep="\t", header=False, index=False)
 
-# Parallel Computing each variant for speed
-def process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold):
-    # filter out variants with low maf
-    allele_counts = variant.gt_alt_freqs
-    for allele_count in allele_counts:
-        maf = np.min(allele_count) / np.sum(allele_count)
-        if maf < maf_threshold:
-            return None
-    # preprocessing data for linear regression
-    genotype_data = []
-    phenotype_data = []
-    for sample in samples:
-        if sample in pheno_dict:
-            index = index_dict[sample]
-            gt = variant.genotypes[index]
-            genotype_data.append(sum(gt))
-            phenotype_data.append(binary_mapping[pheno_dict[sample]])
-    # run linear regression and store the output in the 
-    if len(genotype_data) > 0:
-        genotype_data = np.array(genotype_data, dtype=int)
-        phenotype_data = np.array(phenotype_data, dtype=int)
 
-        slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
-        return (variant.CHROM, variant.ID, variant.POS, variant.REF, 'ADD', len(genotype_data),
-                slope, r_value / std_err, p_value)
-      
 # Perform the linear regression for quantitative traits
 def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex):
     # Make Index File
@@ -116,23 +89,48 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     # Parse VCF file using cyvcf2
     vcf = VCF(vcf_file)
     samples = vcf.samples
-  
-    # count number of variants to be used in progress bar
-    num_variants = sum(1 for _ in vcf)
+
     # Prepare output file
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
-
-    # Use python multiprocessing module to compute lin regress 
-    with Pool(cpu_count()) as p:
-        print("opened pool")
-        with tqdm(total=num_variants, desc="Processing Variants") as pbar:
-            results = p.map(lambda variant: process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf)
-            for result in results:
-                if result:
-                    output.write("\t".join(map(str, result)) + "\n")
-                    pbar.update()
+    # Iterate through each variant using cyvcf2
+    variantCount = 0
+    for variant in vcf:
+        # Keep track of variant progress
+        print(f"Processing variant {variantCount}")
+        variantCount += 1
+        # Calculate the maf
+        allele_counts = variant.gt_alt_freqs
+        for allele_count in allele_counts:
+            maf = np.min(allele_count) / np.sum(allele_count)
+            # If the maf is too small then do not include
+            if maf < maf_threshold:
+                continue
+            
+        # Prep data for linear regression
+        genotype_data = []
+        phenotype_data = []
+        for sample in samples:
+            # Check if the sample actually exists in the pt dictionary
+            if sample in pheno_dict:  
+                index = index_dict[sample]
+                gt = variant.genotypes[index]
+                genotype_data.append(sum(gt))
+                phenotype_data.append(binary_mapping[pheno_dict[sample]])
+        # If we have samples and everything was correctly initialized
+        if len(genotype_data) > 0:
+          # Convert to np arrays for speed
+          genotype_data = np.array(genotype_data, dtype=int)
+          phenotype_data = np.array(phenotype_data, dtype=int)
+          # Check the shape of the arrays
+    
+          # Do linear regression using scipy
+          slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
+          # Write results to output(formatting to 4 decimal places)
+          output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
     output.close()
+
+  
 
 # Plotting the Manhattan and QQ plots
 def plot(linearFile, manhattan_file, qq_file):
