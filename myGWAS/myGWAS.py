@@ -127,18 +127,23 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     # Use python multiprocessing module to compute lin regress 
     with Pool(cpu_count()) as p:
       # create a tqdm progress bar
-      pbar = tqdm(total=num_variants, desc="Processing Variants")
+      #pbar = tqdm(total=num_variants, desc="Processing Variants")
     
       # use imap_unordered for an unordered iterator
       #for result in p.imap_unordered(lambda variant: process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf):
           #if result:
           #    output.write("\t".join(map(str, result)) + "\n")
           #pbar.update()
-      results = p.map(process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf)
-      for result in results:
-          if result:
-              output.write("\t".join(map(str, result)) + "\n")
-          pbar.update()
+      #results = p.map(process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf)
+      #for result in results:
+          #if result:
+          #    output.write("\t".join(map(str, result)) + "\n")
+          #pbar.update()
+        with tqdm(total=len(num_variants), desc="Processing Variants") as pbar:
+            for result in p.imap(lambda variant: process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold), vcf):
+                if result:
+                    output.write("\t".join(map(str, result)) + "\n")
+                pbar.update()
     output.close()
 
 # Plotting the Manhattan and QQ plots
