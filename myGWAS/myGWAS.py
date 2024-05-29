@@ -71,7 +71,7 @@ def create_index_file(vcf_file, index_file):
     index_df.to_csv(index_file, sep="\t", header=False, index=False)
 
 # Parallel Computing each variant for speed
-def process_variant(variant):
+def process_variant(variant, samples, pheno_dict, index_dict, binary_mapping, maf_threshold):
     # filter out variants with low maf
     allele_counts = variant.gt_alt_freqs
     for allele_count in allele_counts:
