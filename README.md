@@ -11,7 +11,7 @@ First and foremost, please clone this repository this whole thing.\
 ```bash
 https://github.com/haesoljung04/CSE185-Final-Project.git
 ```
-Then run,
+Then travel into that directory using the following command:
 ```bash
 cd CSE185-Final-Project
 ```
