@@ -13,7 +13,7 @@ setup(
         "scipy",
         "pandas",
         "seaborn",
-        "matplotlib",
+        "matplotlib>=3.5.0",
         "adjustText",
         "setuptools", 
   ],
