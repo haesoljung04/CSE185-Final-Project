@@ -135,7 +135,6 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
 
     output.close()
 
-  
 
 # Plotting the Manhattan and QQ plots
 def plot(linearFile, manhattan_file, qq_file):
@@ -194,8 +193,10 @@ def plot(linearFile, manhattan_file, qq_file):
     plt.tight_layout()
   
     # Save the Manhattan plot to a file
-    plt.show()
-    plot.savefig(manhattan_file)
+    with tqdm(desc="Saving Manhattan plot") as pbar:
+        plt.show()
+        plot.savefig(manhattan_file)
+        pbar.update(1)
     
     # Generate the QQ plot
     fig, ax = plt.subplots(figsize=(8, 8))
@@ -212,8 +213,10 @@ def plot(linearFile, manhattan_file, qq_file):
     ax.set_title('QQ Plot')
   
     # Save the QQ plot to a file
-    plt.show()
-    fig.savefig(qq_file)
+    with tqdm(desc="Saving QQ plot") as pbar:
+        plt.show()
+        fig.savefig(qq_file)
+        pbar.update(1)
 
 
 # Output the # genome wide significant SNPS
@@ -222,7 +225,7 @@ def summary(linearFile):
     # Open the linear file for reading
     with open(linearFile, 'r') as file:
         # Read each line in the file
-        for line in file:
+        for line in tqdm(file, desc="Calculating summary statistics"):
             fields = line.strip().split('\t')
             p_value = float(fields[8])
             # Check if the SNP is genome-wide significant
@@ -231,6 +234,7 @@ def summary(linearFile):
     
     # Print total number of significant SNPs found
     print(f"Total number of significant SNPs found: {significant_snps_count}")
+
 
 
 if __name__ == "__main__":
