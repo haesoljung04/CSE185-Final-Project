@@ -2,7 +2,7 @@
 
 ## Description
 
-myGWAS is a command-line tool designed to perform GWAS on given VCF and phenotype files, focusing on linear regression analysis and providing visualization of the results through Manhattan and QQ plots.
+ID-GAF is a command-line tool designed to perform GWAS on given VCF and phenotype files, focusing on linear regression analysis and providing visualization of the results through Manhattan and QQ plots.
 
 ## Installation Instructions
 NOTE: currently only working on datahub so please test on there...
