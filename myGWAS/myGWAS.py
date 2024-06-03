@@ -93,51 +93,48 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     samples = vcf.samples
 
     # Count the total number of variants
-    #total_variant_count = sum(1 for _ in vcf)
-    #print(total_variant_count)
+    total_variant_count = sum(1 for _ in vcf)
     # Prepare output file
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
 
     # Initialize tqdm progress bar with total variant count
-    #progress_bar = tqdm(total=total_variant_count, desc="Performing Linear Regression")
-
-    # Iterate through each variant using cyvcf2
-    for variant in vcf:
-        # Update progress bar
-        # Calculate the maf
-        allele_counts = variant.gt_alt_freqs
-        for allele_count in allele_counts:
-            maf = np.min(allele_count) / np.sum(allele_count)
-            # If the maf is too small then do not include
-            if maf < maf_threshold:
-                continue
-            
-        # Prep data for linear regression
-        genotype_data = []
-        phenotype_data = []
-        for sample in samples:
-            # Check if the sample actually exists in the pt dictionary
-            if sample in pheno_dict:  
-                index = index_dict[sample]
-                gt = variant.genotypes[index]
-                genotype_data.append(sum(gt))
-                phenotype_data.append(binary_mapping[pheno_dict[sample]])
-        # If we have samples and everything was correctly initialized
-        if len(genotype_data) > 0:
-          # Convert to np arrays for speed
-          genotype_data = np.array(genotype_data, dtype=int)
-          phenotype_data = np.array(phenotype_data, dtype=int)
-          # Check the shape of the arrays
-    
-          # Do linear regression using scipy
-          slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
-          # Write results to output(formatting to 4 decimal places)
-          output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
-          #progress_bar.update(1)
+    with tqdm(total=total_variant_count, desc="Performing Linear Regression") as pbar:
+      # Iterate through each variant using cyvcf2
+      for variant in vcf:
+          # Update progress bar
+          # Calculate the maf
+          allele_counts = variant.gt_alt_freqs
+          for allele_count in allele_counts:
+              maf = np.min(allele_count) / np.sum(allele_count)
+              # If the maf is too small then do not include
+              if maf < maf_threshold:
+                  continue
+              
+          # Prep data for linear regression
+          genotype_data = []
+          phenotype_data = []
+          for sample in samples:
+              # Check if the sample actually exists in the pt dictionary
+              if sample in pheno_dict:  
+                  index = index_dict[sample]
+                  gt = variant.genotypes[index]
+                  genotype_data.append(sum(gt))
+                  phenotype_data.append(binary_mapping[pheno_dict[sample]])
+          # If we have samples and everything was correctly initialized
+          if len(genotype_data) > 0:
+            # Convert to np arrays for speed
+            genotype_data = np.array(genotype_data, dtype=int)
+            phenotype_data = np.array(phenotype_data, dtype=int)
+            # Check the shape of the arrays
+      
+            # Do linear regression using scipy
+            slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
+            # Write results to output(formatting to 4 decimal places)
+            output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
+            pbar.update(1)
 
     output.close()
-    #progress_bar.close()
 
   
 
