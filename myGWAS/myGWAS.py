@@ -70,8 +70,6 @@ def create_index_file(vcf_file, index_file):
     index_df.to_csv(index_file, sep="\t", header=False, index=False)
 
 # Perform linear regression analysis(the heart of GWAS
-from tqdm import tqdm
-
 def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex):
     # Make Index File
     create_index_file(vcf_file, "index_file.txt")
