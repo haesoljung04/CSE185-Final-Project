@@ -1,4 +1,5 @@
-# ID-GAF: Identification of Genetic Association Factors
+# GAIDS: Genetic Association Identification and Discovery System
+
 
 ## Description
 
