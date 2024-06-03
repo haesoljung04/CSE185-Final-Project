@@ -15,7 +15,8 @@ setup(
         "seaborn",
         "matplotlib>=3.5.0",
         "adjustText",
-        "setuptools", 
+        "setuptools"
+        "numpy>=1.23", 
   ],
   entry_points={
     "console_scripts": [
