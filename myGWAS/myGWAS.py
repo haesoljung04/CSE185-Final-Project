@@ -93,14 +93,14 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     samples = vcf.samples
 
     # Count the total number of variants
-    total_variant_count = sum(1 for _ in vcf)
+    #total_variant_count = sum(1 for _ in vcf)
     print(total_variant_count)
     # Prepare output file
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
 
     # Initialize tqdm progress bar with total variant count
-    progress_bar = tqdm(total=total_variant_count, desc="Performing Linear Regression")
+    #progress_bar = tqdm(total=total_variant_count, desc="Performing Linear Regression")
 
     # Iterate through each variant using cyvcf2
     for variant in vcf:
@@ -134,10 +134,10 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
           slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
           # Write results to output(formatting to 4 decimal places)
           output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
-          progress_bar.update(1)
+          #progress_bar.update(1)
 
     output.close()
-    progress_bar.close()
+    #progress_bar.close()
 
   
 
