@@ -6,6 +6,7 @@ import argparse
 # imports for linear regression analysis
 from cyvcf2 import VCF
 from scipy.stats import linregress
+from tqdm import tqdm
 
 # imports for manhattan plot/qq plot
 import numpy as np
