@@ -71,6 +71,13 @@ def create_index_file(vcf_file, index_file):
 
 # Perform linear regression analysis(the heart of GWAS
 def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex):
+    # Parse VCF file using cyvcf2
+    vcf = VCF(vcf_file)
+    samples = vcf.samples
+    
+    # Count the total number of variants
+    total_variant_count = sum(1 for _ in VCF(vcf_file))
+    
     # Make Index File
     create_index_file(vcf_file, "index_file.txt")
     # Read index file
@@ -86,12 +93,6 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     # Create a binary mapping based on the unique phenotypes
     binary_mapping = {phenotype: index for index, phenotype in enumerate(unique_phenotypes)}
 
-    # Parse VCF file using cyvcf2
-    vcf = VCF(vcf_file)
-    samples = vcf.samples
-
-    # Count the total number of variants
-    total_variant_count = sum(1 for _ in vcf)
     # Prepare output file
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
