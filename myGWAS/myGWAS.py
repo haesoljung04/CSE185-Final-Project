@@ -52,7 +52,7 @@ def main():
       plot(output_file + ".assoc.linear", 'manhattan_plot.png', 'qq_plot.png')
       print("Finished Plotting")
       if print_summary:
-        summary(output_file + ".assoc.linear", "manhattan_plot.png", "qq_plot.png")
+        summary(output_file + ".assoc.linear")
         print("Finished Summary")
   else:
       print("Currently, only linear regression is implemented. Use --linear please.")
