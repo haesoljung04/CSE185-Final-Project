@@ -224,16 +224,19 @@ def summary(linearFile):
     sig_SNP_count = 0
     # Open the linear file for reading
     with open(linearFile, 'r') as file:
+        # Skip the header line
+        next(file)
+        
         # Read each line in the file
         for line in tqdm(file, desc="Calculating summary statistics"):
             fields = line.strip().split('\t')
             p_value = float(fields[8])
             # Check if the SNP is genome-wide significant
             if p_value < 5e-8:
-                significant_snps_count += 1
+                sig_SNP_count += 1
     
     # Print total number of significant SNPs found
-    print(f"Total number of significant SNPs found: {significant_snps_count}")
+    print(f"Total number of significant SNPs found: {sig_SNP_count}")
 
 
 
