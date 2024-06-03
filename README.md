@@ -7,7 +7,15 @@ myGWAS is a command-line tool designed to perform GWAS on given VCF and phenotyp
 ## Installation Instructions
 NOTE: currently only working on datahub so please test on there...
 
-First and foremost, just `git clone` this whole thing.\
+First and foremost, please clone this repository this whole thing.\
+```bash
+https://github.com/haesoljung04/CSE185-Final-Project.git
+```
+Then run,
+```bash
+cd CSE185-Final-Project
+```
+
 To install the required libraries contained in the `requirements.txt` file, you can use `pip`. For example:
 
 ```bash
