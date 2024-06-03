@@ -15,8 +15,8 @@ setup(
         "seaborn",
         "matplotlib>=3.5.0",
         "adjustText",
-        "setuptools"
-        "numpy>=1.23"
+        "setuptools",
+        "numpy>=1.23",
         "tqdm", 
   ],
   entry_points={
