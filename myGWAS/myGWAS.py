@@ -94,7 +94,7 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
 
     # Count the total number of variants
     #total_variant_count = sum(1 for _ in vcf)
-    print(total_variant_count)
+    #print(total_variant_count)
     # Prepare output file
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
