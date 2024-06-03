@@ -69,8 +69,7 @@ def create_index_file(vcf_file, index_file):
     # Save DataFrame to index file
     index_df.to_csv(index_file, sep="\t", header=False, index=False)
 
-
-# Perform the linear regression for quantitative traits
+# Perform linear regression analysis(the heart of GWAS
 def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex):
     # Make Index File
     create_index_file(vcf_file, "index_file.txt")
@@ -96,9 +95,9 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
     # Iterate through each variant using cyvcf2
     variantCount = 0
-    for variant in vcf:
+    # Progress bar
+    for variant in tqdm(vcf, desc="Performing Linear Regression"):
         # Keep track of variant progress
-        print(f"Processing variant {variantCount}", end='\r')
         variantCount += 1
         # Calculate the maf
         allele_counts = variant.gt_alt_freqs
