@@ -1,4 +1,4 @@
-# myGWAS: A Genome-Wide Association Study Tool
+# ID-GAF: Identification of Genetic Association Factors
 
 ## Description
 
