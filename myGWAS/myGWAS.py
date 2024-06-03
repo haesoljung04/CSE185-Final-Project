@@ -70,6 +70,8 @@ def create_index_file(vcf_file, index_file):
     index_df.to_csv(index_file, sep="\t", header=False, index=False)
 
 # Perform linear regression analysis(the heart of GWAS
+from tqdm import tqdm
+
 def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no_sex):
     # Make Index File
     create_index_file(vcf_file, "index_file.txt")
@@ -90,15 +92,21 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
     vcf = VCF(vcf_file)
     samples = vcf.samples
 
+    # Count the total number of variants
+    total_variant_count = sum(1 for _ in vcf)
+
     # Prepare output file
     output = open(output_file + ".assoc.linear", "w")
     output.write("CHR\tSNP\tBP\tA1\tTEST\tNMISS\tBETA\tSTAT\tP\n") # this will be the header
+
+    # Initialize tqdm progress bar with total variant count
+    progress_bar = tqdm(total=total_variant_count, desc="Performing Linear Regression")
+
     # Iterate through each variant using cyvcf2
-    variantCount = 0
-    # Progress bar
-    for variant in tqdm(vcf, desc="Performing Linear Regression"):
-        # Keep track of variant progress
-        variantCount += 1
+    for variant in vcf:
+        # Update progress bar
+        progress_bar.update(1)
+
         # Calculate the maf
         allele_counts = variant.gt_alt_freqs
         for allele_count in allele_counts:
@@ -128,7 +136,9 @@ def linear_regression(vcf_file, pheno_file, output_file, maf_threshold, allow_no
           slope, intercept, r_value, p_value, std_err = linregress(genotype_data, phenotype_data)
           # Write results to output(formatting to 4 decimal places)
           output.write(f"{variant.CHROM}\t{variant.ID}\t{variant.POS}\t{variant.REF}\tADD\t{len(genotype_data)}\t{slope:.4f}\t{r_value / std_err:.4f}\t{p_value:.4g}\n")
+
     output.close()
+    progress_bar.close()
 
   
 
