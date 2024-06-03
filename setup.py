@@ -16,7 +16,7 @@ setup(
         "matplotlib>=3.5.0",
         "adjustText",
         "setuptools",
-        "numpy==1.23",
+        "numpy==1.22",
         "tqdm", 
   ],
   entry_points={
