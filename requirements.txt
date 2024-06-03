@@ -6,3 +6,4 @@ matplotlib
 adjustText
 setuptools
 tqdm
+numpy
